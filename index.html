@@ -785,6 +785,15 @@ details.offline-info[open] summary::before{content:'▼ '}
 .map-sep{width:1px;height:24px;background:#ddd;margin:0 6px}
 .map-stats{text-align:center;padding:8px;font-size:0.82em;color:#888}
 .custom-marker{width:12px;height:12px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.4)}
+.custom-marker.visited{opacity:0.4;border:2px solid #4caf50}
+.hotel-marker.visited{opacity:0.5}
+.visited-badge{display:inline-block;background:#4caf50;color:#fff;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px}
+.visit-btn{display:inline-block;margin:6px 2px 2px;padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer;border:none;font-weight:600}
+.visit-btn.mark{background:#4caf50;color:#fff}
+.visit-btn.unmark{background:#ef5350;color:#fff}
+.note-area{margin-top:6px}
+.note-area textarea{width:100%;height:40px;font-size:12px;border:1px solid #ccc;border-radius:4px;padding:4px;resize:vertical;font-family:inherit}
+.note-area .save-note{background:#1565c0;color:#fff;border:none;padding:3px 10px;border-radius:4px;font-size:11px;cursor:pointer;margin-top:3px}
 .hotel-section{margin-top:20px;border-top:2px solid #e8d5b7;padding-top:0}
 .hotel-section summary{padding:12px 18px;background:linear-gradient(135deg,#fdf6ec,#f5ead6);border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;color:#5d4037;list-style:none;display:flex;align-items:center;gap:8px}
 .hotel-section summary::-webkit-details-marker{display:none}
@@ -859,6 +868,7 @@ details.offline-info[open] summary::before{content:'▼ '}
 <button class="map-btn" id="kumamoto-tram-toggle" style="--c:#4e342e;--bg:#efebe9" onclick="toggleKumamotoTram()">🚋 Kumamoto Tram</button>
 <button class="map-btn" id="kagoshima-tram-toggle" style="--c:#00695c;--bg:#e0f2f1" onclick="toggleKagoshimaTram()">🚋 Kagoshima Tram</button>
 <button class="map-btn" id="location-toggle" style="--c:#e53935;--bg:#ffebee" onclick="toggleLocation()">📍 My Location</button>
+<button class="map-btn" id="visited-toggle" style="--c:#4caf50;--bg:#e8f5e9" onclick="toggleVisited()">✅ Visited</button>
 </div>
 <div class="map-controls" id="subcat-controls" style="display:none;border-top:1px solid #eee"></div>
 <div class="map-controls" id="zone-controls" style="display:none;border-top:1px solid #eee"></div>
@@ -2053,21 +2063,37 @@ var routeLayer=L.layerGroup().addTo(map),stopLayer=L.layerGroup().addTo(map);
 
 function makeIcon(c){return L.divIcon({className:'',html:'<div class="custom-marker" style="background:'+c+'"></div>',iconSize:[12,12],iconAnchor:[6,6]})}
 
+function _vKey(p){return'v_'+p.lat+'_'+p.lng}
+function _nKey(p){return'n_'+p.lat+'_'+p.lng}
+function isVisited(p){return localStorage.getItem(_vKey(p))==='1'}
+function getNote(p){return localStorage.getItem(_nKey(p))||''}
 function navBtns(p){
   if(!window._myLat)return'';
   var d=p.lat+','+p.lng,o=window._myLat+','+window._myLng;
   return'<br><a class="nav-btn google" href="https://www.google.com/maps/dir/'+o+'/'+d+'" target="_blank">📍 Google Maps</a> <a class="nav-btn naver" href="https://map.naver.com/v5/directions/-/'+p.lng+','+p.lat+'/walk" target="_blank">📍 Naver</a>';
 }
+function visitPanel(p){
+  var v=isVisited(p),n=getNote(p),k=_vKey(p);
+  var h='<div style="margin-top:6px;border-top:1px solid #eee;padding-top:4px">';
+  h+=v?'<span class="visited-badge">✅ Visited</span> <button class="visit-btn unmark" onclick="toggleVisit(\''+k+'\')">✖ Unmark</button>':'<button class="visit-btn mark" onclick="toggleVisit(\''+k+'\')">✅ Mark Visited</button>';
+  h+='<div class="note-area"><textarea id="note-'+k+'" placeholder="Add a note...">'+n.replace(/"/g,'&quot;')+'</textarea><button class="save-note" onclick="saveNote(\''+k+'\',\''+_nKey(p)+'\')">💾 Save</button></div></div>';
+  return h;
+}
+function toggleVisit(k){var v=localStorage.getItem(k)==='1';localStorage.setItem(k,v?'0':'1');updateMarkerIcons();map.closePopup()}
+function saveNote(vk,nk){var t=document.getElementById('note-'+vk);if(t)localStorage.setItem(nk,t.value);var btn=t.nextElementSibling;btn.textContent='✅ Saved!';setTimeout(function(){btn.textContent='💾 Save'},1000)}
+var showVisitedOnly=false;
+function toggleVisited(){showVisitedOnly=!showVisitedOnly;var btn=document.getElementById('visited-toggle');btn.classList.toggle('active');btn.style.fontWeight=showVisitedOnly?'700':'';btn.textContent=showVisitedOnly?'✅ Visited Only':'✅ Visited';updateMap()}
+function updateMarkerIcons(){allMarkers.forEach(function(m){var p=m._data,v=isVisited(p);if(p.subcat==='Hotel'){var el=m._icon;if(el){var d=el.querySelector('.hotel-marker');if(d){d.classList.toggle('visited',v)}}}else{var el=m._icon;if(el){var d=el.querySelector('.custom-marker');if(d){d.classList.toggle('visited',v)}}}})}
 function createMarker(p){
   var icon,zOff=0;
-  if(p.subcat==='Hotel'){icon=L.divIcon({className:'',html:'<div class="hotel-marker">🏨</div>',iconSize:[28,28],iconAnchor:[14,14]});zOff=1000;}
-  else{icon=makeIcon(p.mapColor);}
+  if(p.subcat==='Hotel'){icon=L.divIcon({className:'',html:'<div class="hotel-marker'+(isVisited(p)?' visited':'')+'">🏨</div>',iconSize:[28,28],iconAnchor:[14,14]});zOff=1000;}
+  else{icon=L.divIcon({className:'',html:'<div class="custom-marker'+(isVisited(p)?' visited':'')+'" style="background:'+p.mapColor+'"></div>',iconSize:[12,12],iconAnchor:[6,6]});}
   var base=p.subcat==='Hotel'?'<strong>'+p.name+'</strong><br><span style="color:#8d6e63">'+p.desc+'</span>':'<strong>'+p.icon+' '+p.name+'</strong><br><span style="color:#888">'+p.city+(p.zone&&p.zone.indexOf('other')<0?' / '+p.zone:'')+' – '+(p.subcat||p.category)+'</span>'+(p.desc?'<br><small>'+p.desc+'</small>':'');
-  var m=L.marker([p.lat,p.lng],{icon:icon,zIndexOffset:zOff}).bindPopup(base+navBtns(p));
+  var m=L.marker([p.lat,p.lng],{icon:icon,zIndexOffset:zOff}).bindPopup(base+navBtns(p)+visitPanel(p),{maxWidth:280});
   m._data=p;m._basePopup=base;
   return m;
 }
-map.on('popupopen',function(e){var m=e.popup._source;if(m&&m._basePopup){e.popup.setContent(m._basePopup+navBtns(m._data))}});
+map.on('popupopen',function(e){var m=e.popup._source;if(m&&m._basePopup){e.popup.setContent(m._basePopup+navBtns(m._data)+visitPanel(m._data))}});
 var allMarkers=[];
 var placeLayer=L.layerGroup().addTo(map);
 var _markersReady=false;
@@ -2122,7 +2148,7 @@ function updateMap(){
       allMarkers.forEach(function(m){
         var p=m._data,catMatch=true;
         if(activeCat!=='all'){var macro=subcatToMacro[p.subcat]||'';catMatch=macro===activeCat;if(catMatch&&activeSubcat!=='all')catMatch=p.subcat===activeSubcat;}
-        if(catMatch&&dayBounds.contains([p.lat,p.lng])){placeLayer.addLayer(m);c++;}
+        if(catMatch&&dayBounds.contains([p.lat,p.lng])&&(!showVisitedOnly||isVisited(p))){placeLayer.addLayer(m);c++;}
       });
       var bounds=L.latLngBounds(coords);if(bounds.isValid())map.fitBounds(bounds,{padding:[50,50]});
     }
@@ -2134,7 +2160,7 @@ function updateMap(){
       var zoneMatch=activeZone==='all'||p.zone===activeZone;
       var catMatch=true;
       if(activeCat!=='all'){var macro=subcatToMacro[p.subcat]||'';catMatch=macro===activeCat;if(catMatch&&activeSubcat!=='all')catMatch=p.subcat===activeSubcat;}
-      if(cityMatch&&zoneMatch&&catMatch){placeLayer.addLayer(m);c++;}
+      if(cityMatch&&zoneMatch&&catMatch&&(!showVisitedOnly||isVisited(p))){placeLayer.addLayer(m);c++;}
     });
     if(c>0){var layers=placeLayer.getLayers();if(layers.length>0){var b=L.featureGroup(layers).getBounds();if(b.isValid())map.fitBounds(b,{padding:[30,30]});}}
   }
