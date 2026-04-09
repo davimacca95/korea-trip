@@ -788,6 +788,8 @@ details.offline-info[open] summary::before{content:'▼ '}
 .emoji-marker{width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;font-size:14px;line-height:1}
 .custom-marker.visited{opacity:0.4;border:2px solid #4caf50}
 .emoji-marker.visited{opacity:0.4;border:2px solid #4caf50}
+.emoji-marker.planned{border:3px solid #FFD700;box-shadow:0 0 6px rgba(255,215,0,0.6)}
+.hotel-marker.planned{border:3px solid #FFD700;box-shadow:0 0 6px rgba(255,215,0,0.6)}
 .hotel-marker.visited{opacity:0.5}
 .visited-badge{display:inline-block;background:#4caf50;color:#fff;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px}
 .visit-btn{display:inline-block;margin:6px 2px 2px;padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer;border:none;font-weight:600}
@@ -2072,7 +2074,7 @@ function getNote(p){return localStorage.getItem(_nKey(p))||''}
 function navBtns(p){
   if(!window._myLat)return'';
   var d=p.lat+','+p.lng,o=window._myLat+','+window._myLng;
-  return'<br><a class="nav-btn google" href="https://www.google.com/maps/dir/'+o+'/'+d+'" target="_blank">📍 Google Maps</a> <a class="nav-btn naver" href="https://map.naver.com/v5/directions/-/'+p.lng+','+p.lat+'/walk" target="_blank">📍 Naver</a>';
+  return'<br><a class="nav-btn google" href="https://www.google.com/maps/dir/'+o+'/'+d+'" target="_blank">🧭 Indicazioni Google</a> <a class="nav-btn naver" href="https://map.naver.com/v5/directions/-/'+p.lng+','+p.lat+'/walk" target="_blank">🧭 Indicazioni Naver</a>';
 }
 function visitPanel(p){
   var v=isVisited(p),n=getNote(p),k=_vKey(p);
@@ -2090,6 +2092,11 @@ function subcatIcon(sub){
 var m={"Tempio/Santuario":"⛩️","Monumento":"⛩️","Attrazione":"⛩️","Parco/Giardino":"🌳","Museo/Arte":"🏛️","Quartiere":"🏛️","Mercato/Shopping Street":"🏪","Onsen/Terme":"🏪","Ramen":"🍜","Noodles":"🍜","Udon/Soba":"🍜","Zuppe/Stufati":"🍜","Korean BBQ":"🥩","Carne/Wagyu":"🥩","Tonkatsu":"🥩","Tempura/Katsu":"🥩","Yakitori/Pollo":"🥩","Gimbap/Mandu":"🥟","Gyoza":"🥟","Cucina Coreana":"🥟","Ristorante":"🥟","Pasta/Italiano":"🥟","Sushi":"🥟","Pesce/Frutti di mare":"🥟","Street Food":"🍢","Takoyaki/Okonomi":"🍢","Fried Chicken/Chimaek":"🍢","Onigiri":"🍢","Pojangmacha/Soju":"🍢","Izakaya/Bar":"🍢","Tè/Caffè":"☕","Dolci/Wagashi":"🍡","Bingsu/Dolci":"🍡","Negozio":"🛍️","Hotel":"🏨","Altro":"📌"};
 return m[sub]||"📌";
 }
+var plannedDays={"45.6306,8.7281":[1,17],"30.5728,103.9422":[1],"37.4602,126.4407":[1,2,5,10],"37.5563,126.9236":[2,3,4,5],"37.5826,126.9831":[2],"37.583,126.984":[2],"37.58,126.985":[2],"37.58,126.981":[2],"37.5759,126.9769":[2,4],"37.5729,126.9867":[2,3,4],"37.5696,126.989":[2],"37.57,126.987":[2],"37.5717,126.992":[2],"37.57,126.999":[2],"37.5759,126.977":[3],"37.5794,126.991":[3],"37.5796,126.9903":[3],"37.5766,126.9855":[3],"37.5789,126.9948":[3],"37.5715,126.985":[3],"37.5705,126.983":[3],"37.5153,127.0575":[4],"37.5116,127.0595":[4],"37.5659,126.975":[4],"37.5796,126.977":[4],"37.5738,126.9853":[4],"37.5239,126.9804":[5],"33.5859,130.4507":[5],"33.5932,130.4046":[5],"33.5896,130.4109":[5],"33.595,130.1095":[6],"33.5897,130.4207":[6],"32.7898,130.6876":[6,8],"32.7986,130.7062":[7,8],"32.791,130.7348":[7],"32.806,130.7058":[7],"32.8037,130.7038":[7],"32.801,130.709":[7],"32.817,130.6888":[7],"32.7117,131.3079":[8],"32.7345,131.3507":[8],"31.5839,130.5467":[8,9],"31.5901,130.5534":[8,10],"31.612,130.577":[9],"31.612,130.578":[9],"31.61,130.576":[9],"31.54,130.55":[9],"31.48,130.54":[9],"31.38,130.44":[9],"31.589,130.556":[9],"31.8033,130.7194":[10],"37.5609,126.9835":[10,11,12],"37.8889,126.7408":[11],"37.5512,126.9882":[11],"37.5592,126.9775":[11],"37.5547,126.9707":[12],"35.8428,129.2194":[12],"35.838,129.21":[12],"35.832,129.215":[12],"35.834,129.219":[12],"35.834,129.221":[12],"35.826,129.227":[12],"35.835,129.226":[12],"35.829,129.223":[12],"35.8417,129.2122":[12],"35.79,129.332":[13],"35.796,129.349":[13],"35.8346,129.2189":[13],"35.1152,129.0403":[13],"35.0975,129.0105":[14],"35.0985,129.0275":[14],"35.1005,129.0325":[14],"35.0969,129.0305":[14],"35.07,129.018":[14],"35.065,129.015":[14],"35.163,129.17":[15],"35.165,129.185":[15],"35.1884,129.2233":[15],"35.1588,129.1604":[15],"35.153,129.153":[15],"35.1694,129.1316":[15],"35.1,129.123":[16],"35.11,129.115":[16],"35.1575,129.059":[16],"35.135,129.055":[16],"35.138,129.068":[16],"35.1796,128.9383":[17],"40.0799,116.6031":[17]};
+function getPlannedDays(p){
+var k=Math.round(p.lat*10000)/10000+','+Math.round(p.lng*10000)/10000;
+return plannedDays[k]||[];
+}
 function macroColor(sub){
 var macro=(subcatToMacro[sub]||'Altro');
 var c={"Cibo":"#EE7733","Visite":"#0077BB","Dolci":"#EE3377","Shopping":"#33BBEE","Hotel":"#8B6544","Altro":"#BBBBBB"};
@@ -2098,9 +2105,13 @@ return c[macro]||"#BBBBBB";
 function createMarker(p){
   var icon,zOff=0;
   var emoji=subcatIcon(p.subcat);
-  if(p.subcat==='Hotel'){icon=L.divIcon({className:'',html:'<div class="hotel-marker'+(isVisited(p)?' visited':'')+'">🏨</div>',iconSize:[28,28],iconAnchor:[14,14]});zOff=1000;}
-  else{icon=L.divIcon({className:'',html:'<div class="emoji-marker'+(isVisited(p)?' visited':'')+'" style="background:'+macroColor(p.subcat)+'">'+emoji+'</div>',iconSize:[26,26],iconAnchor:[13,13]});}
-  var base=p.subcat==='Hotel'?'<strong>'+p.name+'</strong><br><span style="color:#8d6e63">'+p.desc+'</span>':'<strong>'+p.icon+' '+p.name+'</strong><br><span style="color:#888">'+p.city+(p.zone&&p.zone.indexOf('other')<0?' / '+p.zone:'')+' – '+(p.subcat||p.category)+'</span>'+(p.desc?'<br><small>'+p.desc+'</small>':'');
+  var pd=getPlannedDays(p);
+  var pc=pd.length>0?' planned':'';
+  if(p.subcat==='Hotel'){icon=L.divIcon({className:'',html:'<div class="hotel-marker'+(isVisited(p)?' visited':'')+pc+'">🏨</div>',iconSize:[28,28],iconAnchor:[14,14]});zOff=1000;}
+  else{icon=L.divIcon({className:'',html:'<div class="emoji-marker'+(isVisited(p)?' visited':'')+pc+'" style="background:'+macroColor(p.subcat)+'">'+emoji+'</div>',iconSize:[26,26],iconAnchor:[13,13]});}
+  var dayTag=pd.length>0?'<br><span style="color:#DAA520;font-weight:bold">📅 Giorno '+pd.join(', ')+'</span>':'';
+  var navLinks='<br><a class="nav-btn google" href="https://www.google.com/maps/search/'+encodeURIComponent(p.name)+'/@'+p.lat+','+p.lng+',17z" target="_blank">📍 Google Maps</a> <a class="nav-btn naver" href="https://map.naver.com/v5/search/'+encodeURIComponent(p.name)+'?c='+p.lng+','+p.lat+',17,0,0,0,dh" target="_blank">📍 Naver</a>';
+  var base=p.subcat==='Hotel'?'<strong>'+p.name+'</strong><br><span style="color:#8d6e63">'+p.desc+'</span>'+dayTag+navLinks:'<strong>'+p.icon+' '+p.name+'</strong><br><span style="color:#888">'+p.city+(p.zone&&p.zone.indexOf('other')<0?' / '+p.zone:'')+' – '+(p.subcat||p.category)+'</span>'+(p.desc?'<br><small>'+p.desc+'</small>':'')+dayTag+navLinks;
   var m=L.marker([p.lat,p.lng],{icon:icon,zIndexOffset:zOff}).bindPopup(base+navBtns(p)+visitPanel(p),{maxWidth:280});
   m._data=p;m._basePopup=base;
   return m;
