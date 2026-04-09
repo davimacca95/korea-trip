@@ -788,8 +788,8 @@ details.offline-info[open] summary::before{content:'▼ '}
 .emoji-marker{width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;font-size:14px;line-height:1}
 .custom-marker.visited{opacity:0.4;border:2px solid #4caf50}
 .emoji-marker.visited{opacity:0.4;border:2px solid #4caf50}
-.emoji-marker.planned{border:3px solid #FFD700;box-shadow:0 0 6px rgba(255,215,0,0.6)}
-.hotel-marker.planned{border:3px solid #FFD700;box-shadow:0 0 6px rgba(255,215,0,0.6)}
+.emoji-marker.planned{border:3px solid #444;box-shadow:0 0 4px rgba(0,0,0,0.3)}
+.hotel-marker.planned{border:3px solid #444;box-shadow:0 0 4px rgba(0,0,0,0.3)}
 .hotel-marker.visited{opacity:0.5}
 .visited-badge{display:inline-block;background:#4caf50;color:#fff;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px}
 .visit-btn{display:inline-block;margin:6px 2px 2px;padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer;border:none;font-weight:600}
@@ -2109,7 +2109,7 @@ function createMarker(p){
   var pc=pd.length>0?' planned':'';
   if(p.subcat==='Hotel'){icon=L.divIcon({className:'',html:'<div class="hotel-marker'+(isVisited(p)?' visited':'')+pc+'">🏨</div>',iconSize:[28,28],iconAnchor:[14,14]});zOff=1000;}
   else{icon=L.divIcon({className:'',html:'<div class="emoji-marker'+(isVisited(p)?' visited':'')+pc+'" style="background:'+macroColor(p.subcat)+'">'+emoji+'</div>',iconSize:[26,26],iconAnchor:[13,13]});}
-  var dayTag=pd.length>0?'<br><span style="color:#DAA520;font-weight:bold">📅 Giorno '+pd.join(', ')+'</span>':'';
+  var dayTag=pd.length>0?'<br><span style="color:#444;font-weight:bold">📅 Giorno '+pd.join(', ')+'</span>':'';
   var navLinks='<br><a class="nav-btn google" href="https://www.google.com/maps/search/'+encodeURIComponent(p.name)+'/@'+p.lat+','+p.lng+',17z" target="_blank">📍 Google Maps</a> <a class="nav-btn naver" href="https://map.naver.com/v5/search/'+encodeURIComponent(p.name)+'?c='+p.lng+','+p.lat+',17,0,0,0,dh" target="_blank">📍 Naver</a>';
   var base=p.subcat==='Hotel'?'<strong>'+p.name+'</strong><br><span style="color:#8d6e63">'+p.desc+'</span>'+dayTag+navLinks:'<strong>'+p.icon+' '+p.name+'</strong><br><span style="color:#888">'+p.city+(p.zone&&p.zone.indexOf('other')<0?' / '+p.zone:'')+' – '+(p.subcat||p.category)+'</span>'+(p.desc?'<br><small>'+p.desc+'</small>':'')+dayTag+navLinks;
   var m=L.marker([p.lat,p.lng],{icon:icon,zIndexOffset:zOff}).bindPopup(base+navBtns(p)+visitPanel(p),{maxWidth:280});
