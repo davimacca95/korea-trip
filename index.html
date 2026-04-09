@@ -785,7 +785,9 @@ details.offline-info[open] summary::before{content:'▼ '}
 .map-sep{width:1px;height:24px;background:#ddd;margin:0 6px}
 .map-stats{text-align:center;padding:8px;font-size:0.82em;color:#888}
 .custom-marker{width:12px;height:12px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.4)}
+.emoji-marker{width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;font-size:14px;line-height:1}
 .custom-marker.visited{opacity:0.4;border:2px solid #4caf50}
+.emoji-marker.visited{opacity:0.4;border:2px solid #4caf50}
 .hotel-marker.visited{opacity:0.5}
 .visited-badge{display:inline-block;background:#4caf50;color:#fff;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px}
 .visit-btn{display:inline-block;margin:6px 2px 2px;padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer;border:none;font-weight:600}
@@ -2083,11 +2085,16 @@ function toggleVisit(k){var v=localStorage.getItem(k)==='1';localStorage.setItem
 function saveNote(vk,nk){var t=document.getElementById('note-'+vk);if(t)localStorage.setItem(nk,t.value);var btn=t.nextElementSibling;btn.textContent='✅ Saved!';setTimeout(function(){btn.textContent='💾 Save'},1000)}
 var showVisitedOnly=false;
 function toggleVisited(){showVisitedOnly=!showVisitedOnly;var btn=document.getElementById('visited-toggle');btn.classList.toggle('active');btn.style.fontWeight=showVisitedOnly?'700':'';btn.textContent=showVisitedOnly?'✅ Visited Only':'✅ Visited';updateMap()}
-function updateMarkerIcons(){allMarkers.forEach(function(m){var p=m._data,v=isVisited(p);if(p.subcat==='Hotel'){var el=m._icon;if(el){var d=el.querySelector('.hotel-marker');if(d){d.classList.toggle('visited',v)}}}else{var el=m._icon;if(el){var d=el.querySelector('.custom-marker');if(d){d.classList.toggle('visited',v)}}}})}
+function updateMarkerIcons(){allMarkers.forEach(function(m){var p=m._data,v=isVisited(p);if(p.subcat==='Hotel'){var el=m._icon;if(el){var d=el.querySelector('.hotel-marker');if(d){d.classList.toggle('visited',v)}}}else{var el=m._icon;if(el){var d=el.querySelector('.emoji-marker');if(d){d.classList.toggle('visited',v)}}}})}
+function subcatIcon(sub){
+var m={"Tempio/Santuario":"⛩️","Monumento":"⛩️","Attrazione":"⛩️","Parco/Giardino":"🌳","Museo/Arte":"🏛️","Quartiere":"🏛️","Mercato/Shopping Street":"🏪","Onsen/Terme":"🏪","Ramen":"🍜","Noodles":"🍜","Udon/Soba":"🍜","Zuppe/Stufati":"🍜","Korean BBQ":"🥩","Carne/Wagyu":"🥩","Tonkatsu":"🥩","Tempura/Katsu":"🥩","Yakitori/Pollo":"🥩","Gimbap/Mandu":"🥟","Gyoza":"🥟","Cucina Coreana":"🥟","Ristorante":"🥟","Pasta/Italiano":"🥟","Sushi":"🥟","Pesce/Frutti di mare":"🥟","Street Food":"🍢","Takoyaki/Okonomi":"🍢","Fried Chicken/Chimaek":"🍢","Onigiri":"🍢","Pojangmacha/Soju":"🍢","Izakaya/Bar":"🍢","Tè/Caffè":"☕","Dolci/Wagashi":"🍡","Bingsu/Dolci":"🍡","Negozio":"🛍️","Hotel":"🏨","Altro":"📌"};
+return m[sub]||"📌";
+}
 function createMarker(p){
   var icon,zOff=0;
+  var emoji=subcatIcon(p.subcat);
   if(p.subcat==='Hotel'){icon=L.divIcon({className:'',html:'<div class="hotel-marker'+(isVisited(p)?' visited':'')+'">🏨</div>',iconSize:[28,28],iconAnchor:[14,14]});zOff=1000;}
-  else{icon=L.divIcon({className:'',html:'<div class="custom-marker'+(isVisited(p)?' visited':'')+'" style="background:'+p.mapColor+'"></div>',iconSize:[12,12],iconAnchor:[6,6]});}
+  else{icon=L.divIcon({className:'',html:'<div class="emoji-marker'+(isVisited(p)?' visited':'')+'" style="background:'+p.mapColor+'">'+emoji+'</div>',iconSize:[26,26],iconAnchor:[13,13]});}
   var base=p.subcat==='Hotel'?'<strong>'+p.name+'</strong><br><span style="color:#8d6e63">'+p.desc+'</span>':'<strong>'+p.icon+' '+p.name+'</strong><br><span style="color:#888">'+p.city+(p.zone&&p.zone.indexOf('other')<0?' / '+p.zone:'')+' – '+(p.subcat||p.category)+'</span>'+(p.desc?'<br><small>'+p.desc+'</small>':'');
   var m=L.marker([p.lat,p.lng],{icon:icon,zIndexOffset:zOff}).bindPopup(base+navBtns(p)+visitPanel(p),{maxWidth:280});
   m._data=p;m._basePopup=base;
