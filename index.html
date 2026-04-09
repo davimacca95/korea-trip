@@ -2090,11 +2090,16 @@ function subcatIcon(sub){
 var m={"Tempio/Santuario":"⛩️","Monumento":"⛩️","Attrazione":"⛩️","Parco/Giardino":"🌳","Museo/Arte":"🏛️","Quartiere":"🏛️","Mercato/Shopping Street":"🏪","Onsen/Terme":"🏪","Ramen":"🍜","Noodles":"🍜","Udon/Soba":"🍜","Zuppe/Stufati":"🍜","Korean BBQ":"🥩","Carne/Wagyu":"🥩","Tonkatsu":"🥩","Tempura/Katsu":"🥩","Yakitori/Pollo":"🥩","Gimbap/Mandu":"🥟","Gyoza":"🥟","Cucina Coreana":"🥟","Ristorante":"🥟","Pasta/Italiano":"🥟","Sushi":"🥟","Pesce/Frutti di mare":"🥟","Street Food":"🍢","Takoyaki/Okonomi":"🍢","Fried Chicken/Chimaek":"🍢","Onigiri":"🍢","Pojangmacha/Soju":"🍢","Izakaya/Bar":"🍢","Tè/Caffè":"☕","Dolci/Wagashi":"🍡","Bingsu/Dolci":"🍡","Negozio":"🛍️","Hotel":"🏨","Altro":"📌"};
 return m[sub]||"📌";
 }
+function macroColor(sub){
+var macro=(subcatToMacro[sub]||'Altro');
+var c={"Cibo":"#EE7733","Visite":"#0077BB","Dolci":"#EE3377","Shopping":"#33BBEE","Hotel":"#8B6544","Altro":"#BBBBBB"};
+return c[macro]||"#BBBBBB";
+}
 function createMarker(p){
   var icon,zOff=0;
   var emoji=subcatIcon(p.subcat);
   if(p.subcat==='Hotel'){icon=L.divIcon({className:'',html:'<div class="hotel-marker'+(isVisited(p)?' visited':'')+'">🏨</div>',iconSize:[28,28],iconAnchor:[14,14]});zOff=1000;}
-  else{icon=L.divIcon({className:'',html:'<div class="emoji-marker'+(isVisited(p)?' visited':'')+'" style="background:'+p.mapColor+'">'+emoji+'</div>',iconSize:[26,26],iconAnchor:[13,13]});}
+  else{icon=L.divIcon({className:'',html:'<div class="emoji-marker'+(isVisited(p)?' visited':'')+'" style="background:'+macroColor(p.subcat)+'">'+emoji+'</div>',iconSize:[26,26],iconAnchor:[13,13]});}
   var base=p.subcat==='Hotel'?'<strong>'+p.name+'</strong><br><span style="color:#8d6e63">'+p.desc+'</span>':'<strong>'+p.icon+' '+p.name+'</strong><br><span style="color:#888">'+p.city+(p.zone&&p.zone.indexOf('other')<0?' / '+p.zone:'')+' – '+(p.subcat||p.category)+'</span>'+(p.desc?'<br><small>'+p.desc+'</small>':'');
   var m=L.marker([p.lat,p.lng],{icon:icon,zIndexOffset:zOff}).bindPopup(base+navBtns(p)+visitPanel(p),{maxWidth:280});
   m._data=p;m._basePopup=base;
