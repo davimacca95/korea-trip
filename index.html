@@ -763,6 +763,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:#faf7f2;color:#2d2d2d;line
 .alt-option .alt-note{font-size:0.8em;color:#888;margin-top:6px;font-style:italic}
 @media(max-width:600px){.alt-options{grid-template-columns:1fr}}
 @media(max-width:900px){.alt-options[style*="1fr 1fr 1fr"]{grid-template-columns:1fr !important}}
+@media print{.alt-options{grid-template-columns:1fr !important}.alt-fork{page-break-inside:avoid}}
 
 .daytour-block{background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border:2px solid #43a047;border-radius:14px;padding:18px;margin:12px 0;position:relative}
 .daytour-block::before{content:'🎟️ DAY TOUR — GIORNATA OCCUPATA';position:absolute;top:-12px;left:20px;background:#43a047;color:#fff;padding:3px 14px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:0.5px}
