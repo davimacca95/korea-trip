@@ -1,4 +1,4 @@
-const CACHE = 'korea-trip-v1776114409';
+const CACHE = 'korea-trip-v1777830484';
 const ASSETS = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', e => {
